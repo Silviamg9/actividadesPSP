@@ -10,8 +10,8 @@ public class Directory {
 		
 		try {
 			
-			Process proceso = new ProcessBuilder("pwd").directory(new File("/tmp")).start();
-			int codigo = proceso.waitFor();
+			Process pb = new ProcessBuilder("pwd").directory(new File("/tmp")).start();
+			int codigo = pb.waitFor();
 
 			if (codigo == 0) {
 				System.out.println("Todo correcto");

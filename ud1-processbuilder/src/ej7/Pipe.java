@@ -1,5 +1,6 @@
 package ej7;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -11,23 +12,18 @@ public class Pipe {
 		//Pasa bytes de p1.getInputStream() a p2.getOutputStream() con un buffer y cierra out de p2.
 		
 		try {
-			Process p1 = new ProcessBuilder("echo", "hola mundo").start();
-			Process p2 = new ProcessBuilder("wc", "-w").start();
-
-			InputStream p1Salida = p1.getInputStream();
-			OutputStream p2Entrada = p2.getOutputStream();
 			
-			p1Salida.transferTo(p2Entrada);
-			p2Entrada.close();
+			File tmp = File.createTempFile("pipe", ".txt");
 			
-			int codigo1 = p1.waitFor();
-			int codigo2 = p2.waitFor();
-			if (codigo1 == 0 && codigo2 == 0) {
-				System.out.println("Todo correcto");
-			} else {
-				System.out.println("Error");
-			}
+			Process pb1 = new ProcessBuilder("bash", "-lc", "echo", "hola mundo").redirectOutput(tmp).start();
+			int codigoP1 = pb1.waitFor();
+			
+			Process pb2 = new ProcessBuilder("bash", "-lc", "wc", "-w").redirectInput(tmp).start();
+			String salida = new String(pb2.getInputStream().readAllBytes(), "UTF-8");
+			int codigoP2 = pb2.waitFor();
 
+			System.out.println(salida);
+			
 		} catch (Exception ex) {
 			System.err.print(ex);
 		}
